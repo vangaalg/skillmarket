@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { runSkillTurn } from "@/lib/anthropic";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const Body = z.object({

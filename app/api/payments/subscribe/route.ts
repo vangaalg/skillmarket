@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 // PHASE 2 — Stripe checkout session.
 // Wire-up plan:
 //   1. Read { tier, user_id } from body (Basic | Pro).

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 // PHASE 2 — Creator payout (70% creator / 30% platform).
 // Plan:
 //   1. Aggregate paid sessions per creator since last payout.

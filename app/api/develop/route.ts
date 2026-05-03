@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 // PHASE 4 — Generate a SKILL.md from a natural-language brief.
 // Plan:
 //   1. Body: { brief: string, name?: string }.
