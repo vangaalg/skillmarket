@@ -34,7 +34,7 @@ async function loadPreviewSkills(): Promise<Skill[]> {
     const sb = supabaseAdmin();
     const { data } = await sb
       .from("skills")
-      .select("id,name,description,category,version,created_at,thumbnail_url")
+      .select("*")
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .limit(6);
