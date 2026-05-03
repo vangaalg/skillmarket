@@ -3,6 +3,9 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES } from "@/lib/categories";
+import { IconArrowRight, IconCheck, IconFolderUp } from "@/components/icons";
+
+const MAX_DEFINITION_CHARS = 50_000;
 
 const SKILL_CATEGORIES = CATEGORIES.filter((c) => c.key !== "all");
 
@@ -83,14 +86,15 @@ export default function UploadPage() {
     }
   }
 
+  const overLimit = definition.length > MAX_DEFINITION_CHARS;
+
   return (
-    <div className="bg-[#f5f5f7] min-h-screen">
-      {/* Page header */}
-      <div className="bg-white border-b border-[#d2d2d7]">
+    <div className="min-h-screen">
+      <div className="bg-white border-b border-ink-200">
         <div className="mx-auto max-w-3xl px-6 py-8">
-          <h1 className="headline text-[#1d1d1f]">Upload a Skill</h1>
-          <p className="mt-2 text-[15px] text-[#6e6e73]">
-            Publish your Claude-powered Skill to the open marketplace. Free. Instant.
+          <h1 className="headline text-ink">Publish a skill</h1>
+          <p className="mt-2 text-[15px] text-ink-600">
+            Publish your Claude-powered skill to Skillorbit.ai. Free. Instant.
           </p>
         </div>
       </div>
@@ -104,18 +108,22 @@ export default function UploadPage() {
             const f = e.dataTransfer.files?.[0];
             if (f) onFile(f);
           }}
-          className="rounded-2xl border-2 border-dashed border-[#d2d2d7] bg-white px-8 py-10 text-center hover:border-[#0071e3] hover:bg-[#f9fbff] transition-colors cursor-pointer"
+          className="rounded-2xl border-2 border-dashed border-ink-200 bg-white px-8 py-10 text-center hover:border-coral hover:bg-coral-50 transition-colors cursor-pointer"
           onClick={() => fileRef.current?.click()}
         >
-          <div className="text-4xl mb-3">📂</div>
-          <div className="text-[15px] font-medium text-[#1d1d1f]">
-            Drag & drop your SKILL file here
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-coral-50 text-coral">
+            <IconFolderUp size={26} />
           </div>
-          <div className="text-[13px] text-[#6e6e73] mt-1">
-            Supports <code>.md</code>, <code>.txt</code>, <code>.json</code>
+          <div className="text-[15px] font-medium text-ink">
+            Drag & drop your skill file here
+          </div>
+          <div className="text-[13px] text-ink-600 mt-1">
+            Supports <code className="bg-cream-200 px-1 rounded">.md</code>,{" "}
+            <code className="bg-cream-200 px-1 rounded">.txt</code>,{" "}
+            <code className="bg-cream-200 px-1 rounded">.json</code>
           </div>
           <div className="mt-4 inline-block btn-ghost cursor-pointer">
-            Choose file from laptop
+            Choose file from your computer
           </div>
           <input
             ref={fileRef}
@@ -129,31 +137,28 @@ export default function UploadPage() {
             }}
           />
           {info && (
-            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#e9f9ee] px-3 py-1 text-[12px] font-medium text-[#1a8c36]">
-              ✓ {info}
+            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-[12px] font-medium text-emerald-700">
+              <IconCheck size={12} strokeWidth={2.5} /> {info}
             </div>
           )}
         </div>
 
-        {/* Form */}
-        <form onSubmit={submit} className="mt-6 rounded-2xl border border-[#d2d2d7] bg-white p-6 space-y-6">
-          {/* Name */}
+        <form onSubmit={submit} className="mt-6 rounded-2xl border border-ink-200 bg-white p-6 space-y-6">
           <div>
-            <label className="block text-[13px] font-medium text-[#1d1d1f] mb-1.5">
-              Skill Name <span className="text-red-400">*</span>
+            <label className="block text-[13px] font-medium text-ink mb-1.5">
+              Skill name <span className="text-coral">*</span>
             </label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-[#d2d2d7] bg-[#f9f9fb] px-4 py-2.5 text-[14px] text-[#1d1d1f] outline-none focus:ring-2 focus:ring-[#0071e3] focus:border-transparent transition"
+              className="w-full rounded-xl border border-ink-200 bg-cream-200 px-4 py-2.5 text-[14px] text-ink outline-none focus:ring-2 focus:ring-coral focus:border-transparent transition"
               placeholder="e.g. Resume Reviewer, SQL Assistant…"
             />
           </div>
 
-          {/* Category picker */}
           <div>
-            <label className="block text-[13px] font-medium text-[#1d1d1f] mb-2">
-              Category <span className="text-red-400">*</span>
+            <label className="block text-[13px] font-medium text-ink mb-2">
+              Category <span className="text-coral">*</span>
             </label>
             <div className="flex flex-wrap gap-2">
               {SKILL_CATEGORIES.map((cat) => {
@@ -166,8 +171,8 @@ export default function UploadPage() {
                     className="cat-pill border text-[13px] transition-all"
                     style={{
                       background: isActive ? cat.hex : "#ffffff",
-                      color: isActive ? "#ffffff" : "#1d1d1f",
-                      border: `1.5px solid ${isActive ? cat.hex : "#d2d2d7"}`,
+                      color: isActive ? "#ffffff" : "#1F1E1D",
+                      border: `1.5px solid ${isActive ? cat.hex : "#E1DFD7"}`,
                     }}
                   >
                     {cat.emoji} {cat.label}
@@ -177,64 +182,66 @@ export default function UploadPage() {
             </div>
           </div>
 
-          {/* Description */}
           <div>
-            <label className="block text-[13px] font-medium text-[#1d1d1f] mb-1.5">
-              Description <span className="text-red-400">*</span>
+            <label className="block text-[13px] font-medium text-ink mb-1.5">
+              Description <span className="text-coral">*</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="w-full rounded-xl border border-[#d2d2d7] bg-[#f9f9fb] px-4 py-2.5 text-[14px] text-[#1d1d1f] outline-none focus:ring-2 focus:ring-[#0071e3] focus:border-transparent transition resize-none"
-              placeholder="One paragraph on what this Skill does and who it helps."
+              className="w-full rounded-xl border border-ink-200 bg-cream-200 px-4 py-2.5 text-[14px] text-ink outline-none focus:ring-2 focus:ring-coral focus:border-transparent transition resize-none"
+              placeholder="One paragraph on what this skill does and who it helps."
             />
           </div>
 
-          {/* Definition */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[13px] font-medium text-[#1d1d1f]">
+              <label className="text-[13px] font-medium text-ink">
                 SKILL.md / Definition
               </label>
-              <span className="text-[11px] text-[#86868b]">
-                {definition.length.toLocaleString()} chars
+              <span className={`text-[11px] ${overLimit ? "text-red-600 font-medium" : "text-ink-500"}`}>
+                {definition.length.toLocaleString()} / {MAX_DEFINITION_CHARS.toLocaleString()} chars
               </span>
             </div>
             <textarea
               value={definition}
               onChange={(e) => setDefinition(e.target.value)}
               rows={14}
-              className="w-full rounded-xl border border-[#d2d2d7] bg-[#f9f9fb] px-4 py-3 font-mono text-[13px] text-[#1d1d1f] outline-none focus:ring-2 focus:ring-[#0071e3] focus:border-transparent transition resize-y"
+              className="w-full rounded-xl border border-ink-200 bg-cream-200 px-4 py-3 font-mono text-[13px] text-ink outline-none focus:ring-2 focus:ring-coral focus:border-transparent transition resize-y"
             />
+            {overLimit && (
+              <p className="mt-1.5 text-[12px] text-red-600">
+                Definition exceeds {MAX_DEFINITION_CHARS.toLocaleString()} characters. Shorten it before publishing.
+              </p>
+            )}
           </div>
 
-          {/* Error */}
           {err && (
             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-600">
               {err}
             </div>
           )}
 
-          {/* Submit */}
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between pt-2 border-t border-ink-100">
+            <div className="flex items-center gap-2 pt-4">
               <span
                 className="flex h-6 w-6 items-center justify-center rounded-lg text-sm"
                 style={{ background: selectedCat.lightBg }}
               >
                 {selectedCat.emoji}
               </span>
-              <span className="text-[13px] text-[#6e6e73]">
+              <span className="text-[13px] text-ink-600">
                 {selectedCat.label} · Free
               </span>
             </div>
             <button
               type="submit"
-              disabled={busy}
-              className="btn-primary px-6 py-2.5 text-[15px] disabled:opacity-50"
+              disabled={busy || overLimit}
+              className="btn-primary px-6 py-2.5 text-[15px] disabled:opacity-50 mt-4"
             >
-              {busy ? "Publishing…" : "Publish Skill →"}
+              {busy ? "Publishing…" : "Publish skill"}
+              {!busy && <IconArrowRight size={14} strokeWidth={2.25} />}
             </button>
           </div>
         </form>

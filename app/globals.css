@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Apple-style base reset */
+/* ─── Base ──────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
@@ -13,16 +13,16 @@ html {
 }
 
 body {
-  background: #f5f5f7;
-  color: #1d1d1f;
+  background: #FAF9F5;        /* cream */
+  color: #1F1E1D;             /* ink */
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter",
     "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Typography scale — Apple uses tight letter-spacing on large text */
+/* ─── Typography ────────────────────────────────────── */
 .display {
   font-size: clamp(2.5rem, 5vw, 3.75rem);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.05;
 }
@@ -31,94 +31,118 @@ body {
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
-/* Frosted-glass nav */
+/* ─── Frosted-glass nav ─────────────────────────────── */
 .nav-glass {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(250, 249, 245, 0.85);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(31, 30, 29, 0.08);
 }
 
-/* Tile card */
+/* ─── Cards ─────────────────────────────────────────── */
 .skill-tile {
   background: #ffffff;
   border-radius: 18px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  border: 1px solid rgba(31, 30, 29, 0.06);
+  box-shadow: 0 1px 3px rgba(31, 30, 29, 0.03), 0 4px 14px rgba(31, 30, 29, 0.05);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
 }
 
 .skill-tile:hover {
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 2px 6px rgba(31, 30, 29, 0.05), 0 14px 36px rgba(31, 30, 29, 0.10);
   transform: translateY(-2px);
+  border-color: rgba(217, 119, 87, 0.25);
 }
 
-/* Apple blue button */
+/* ─── Buttons ───────────────────────────────────────── */
 .btn-primary {
-  background: #0071e3;
+  background: #D97757;
   color: #fff;
   border-radius: 980px;
-  padding: 0.45em 1.1em;
+  padding: 0.5em 1.25em;
   font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: -0.01em;
-  transition: background 0.15s;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.05s;
   display: inline-flex;
   align-items: center;
+  gap: 0.4em;
+  white-space: nowrap;
 }
+.btn-primary:hover { background: #C5644A; box-shadow: 0 4px 14px rgba(217, 119, 87, 0.25); }
+.btn-primary:active { transform: translateY(0.5px); }
 
-.btn-primary:hover { background: #0077ed; }
-
-/* Ghost button */
 .btn-ghost {
   background: transparent;
-  color: #0071e3;
-  border: 1.5px solid #0071e3;
+  color: #1F1E1D;
+  border: 1.5px solid rgba(31, 30, 29, 0.18);
   border-radius: 980px;
-  padding: 0.42em 1.05em;
+  padding: 0.46em 1.2em;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  white-space: nowrap;
 }
-.btn-ghost:hover { background: #0071e3; color: #fff; }
+.btn-ghost:hover { border-color: #D97757; color: #D97757; }
 
-/* Category pill */
+.btn-dark {
+  background: #1F1E1D;
+  color: #fff;
+  border-radius: 980px;
+  padding: 0.5em 1.25em;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: background 0.15s;
+}
+.btn-dark:hover { background: #3D3D3A; }
+
+/* ─── Pills ─────────────────────────────────────────── */
 .cat-pill {
   border-radius: 980px;
-  padding: 0.35em 1em;
+  padding: 0.4em 1em;
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
 }
 
-/* Focus ring */
+/* ─── Focus ─────────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid #0071e3;
+  outline: 2px solid #D97757;
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-/* Subtle scrollbar */
+/* ─── Scrollbar ────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 9999px; }
+::-webkit-scrollbar-thumb { background: #D9D6C5; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #A3A39E; }
 
-/* Hide scrollbar for category strip */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* Chat typing indicator dots */
+/* ─── Chat typing indicator ────────────────────────── */
 .typing-dot {
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #86868b;
+  background: #7E7E7B;
   animation: typing-bounce 1.2s infinite ease-in-out;
 }
 .typing-dot:nth-child(2) { animation-delay: 0.15s; }
@@ -128,3 +152,10 @@ body {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
   30% { transform: translateY(-6px); opacity: 1; }
 }
+
+/* ─── Subtle orbital decoration ─────────────────────── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.float-slow { animation: float-slow 6s ease-in-out infinite; }

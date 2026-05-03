@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase";
 import { runSkillTurn } from "@/lib/anthropic";
+import { checkRateLimit, clientIdFromRequest } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,6 +20,22 @@ const Body = z.object({
 });
 
 export async function POST(req: Request) {
+  // Rate limit before doing any work — the Anthropic call is the
+  // expensive part, so we want to reject abusers cheaply.
+  const id = clientIdFromRequest(req);
+  const rl = await checkRateLimit(id);
+  if (!rl.allowed) {
+    const seconds = rl.reset ? Math.max(1, Math.ceil((rl.reset - Date.now()) / 1000)) : 60;
+    return NextResponse.json(
+      {
+        error: rl.scope === "daily"
+          ? "Daily request limit reached. Try again tomorrow."
+          : "Too many requests. Please slow down.",
+      },
+      { status: 429, headers: { "retry-after": String(seconds) } },
+    );
+  }
+
   let body: z.infer<typeof Body>;
   try {
     body = Body.parse(await req.json());
@@ -50,27 +67,33 @@ export async function POST(req: Request) {
 
   // Persist (or extend) the session row. Best-effort — failure here
   // shouldn't block the user from getting the reply.
+  let sessionId = body.session_id ?? null;
   try {
     const updatedHistory = [
       ...body.history,
       { role: "user", content: body.message, ts: new Date().toISOString() },
       { role: "assistant", content: reply, ts: new Date().toISOString() },
     ];
-    if (body.session_id) {
+    if (sessionId) {
       await sb
         .from("sessions")
         .update({ chat_history: updatedHistory, updated_at: new Date().toISOString() })
-        .eq("id", body.session_id);
+        .eq("id", sessionId);
     } else {
-      await sb.from("sessions").insert({
-        skill_id: body.skill_id,
-        user_id: body.user_id ?? null,
-        chat_history: updatedHistory,
-      });
+      const { data: inserted } = await sb
+        .from("sessions")
+        .insert({
+          skill_id: body.skill_id,
+          user_id: body.user_id ?? null,
+          chat_history: updatedHistory,
+        })
+        .select("id")
+        .single();
+      if (inserted?.id) sessionId = inserted.id;
     }
   } catch {
     // swallow — telemetry only.
   }
 
-  return NextResponse.json({ reply });
+  return NextResponse.json({ reply, session_id: sessionId });
 }

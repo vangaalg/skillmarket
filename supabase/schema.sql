@@ -1,5 +1,5 @@
 -- ============================================================
--- Skill Marketplace — Supabase schema
+-- Skillorbit.ai — Supabase schema
 -- Run in the Supabase SQL editor (or via `supabase db push`).
 -- Tables for Phase 1 are active; later phases are scaffolded
 -- so the same migration grows without painful rewrites.

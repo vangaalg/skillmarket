@@ -1,12 +1,17 @@
-// PHASE 5 — Enterprise team dashboard. Stub.
+import { IconUsers } from "@/components/icons";
+
 export default function TeamPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-white">Team Dashboard (Phase 5)</h1>
-      <p className="mt-2 text-white/70">
-        Shared Skills, shared sessions, and admin/member roles will live here.
-        Backed by the <code>teams</code> and <code>team_members</code> tables in
-        the schema.
+    <div className="mx-auto max-w-3xl px-6 py-16">
+      <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-coral/20 bg-coral-50 px-3 py-1 text-[12px] font-semibold uppercase tracking-widest text-coral-600">
+        <IconUsers size={11} strokeWidth={2} />
+        Phase 5 · Coming soon
+      </div>
+      <h1 className="headline text-ink mt-2">Team workspaces</h1>
+      <p className="mt-3 text-[15px] text-ink-600">
+        Shared skills, shared sessions, and admin/member roles. Backed by the{" "}
+        <code className="bg-cream-200 px-1.5 py-0.5 rounded text-[13px]">teams</code> and{" "}
+        <code className="bg-cream-200 px-1.5 py-0.5 rounded text-[13px]">team_members</code> tables.
       </p>
     </div>
   );

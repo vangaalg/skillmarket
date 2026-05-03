@@ -39,8 +39,8 @@ export default function CategoryFilter({ skills }: { skills: Skill[] }) {
               className="cat-pill transition-all"
               style={{
                 background: isActive ? cat.hex : "#ffffff",
-                color: isActive ? "#ffffff" : "#1d1d1f",
-                border: `1.5px solid ${isActive ? cat.hex : "#d2d2d7"}`,
+                color: isActive ? "#ffffff" : "#1F1E1D",
+                border: `1.5px solid ${isActive ? cat.hex : "#E1DFD7"}`,
               }}
             >
               {cat.emoji} {cat.label}
@@ -57,12 +57,18 @@ export default function CategoryFilter({ skills }: { skills: Skill[] }) {
       </div>
 
       {skills.length === 0 && (
-        <div className="rounded-2xl border-2 border-dashed border-[#d2d2d7] bg-white py-16 text-center">
-          <div className="text-4xl mb-3">✦</div>
-          <div className="text-[17px] font-medium text-[#1d1d1f]">No Skills yet</div>
-          <p className="mt-1 text-[14px] text-[#6e6e73]">Be the first to upload one.</p>
+        <div className="rounded-2xl border-2 border-dashed border-ink-200 bg-white py-16 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-coral-50 text-coral">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <path d="m17 8-5-5-5 5" />
+              <path d="M12 3v12" />
+            </svg>
+          </div>
+          <div className="text-[17px] font-medium text-ink">No skills yet</div>
+          <p className="mt-1 text-[14px] text-ink-600">Be the first to upload one.</p>
           <Link href="/upload" className="btn-primary mt-5 inline-flex">
-            + Upload a Skill
+            Upload a skill
           </Link>
         </div>
       )}
@@ -80,11 +86,11 @@ export default function CategoryFilter({ skills }: { skills: Skill[] }) {
                 >
                   {meta.emoji}
                 </span>
-                <h2 className="text-[19px] font-semibold text-[#1d1d1f]">
+                <h2 className="text-[19px] font-semibold text-ink">
                   {meta.label}
                 </h2>
-                <span className="text-[13px] text-[#6e6e73]">
-                  {catSkills.length} Skill{catSkills.length !== 1 ? "s" : ""}
+                <span className="text-[13px] text-ink-600">
+                  {catSkills.length} skill{catSkills.length !== 1 ? "s" : ""}
                 </span>
               </div>
             )}
@@ -118,27 +124,24 @@ function SkillTile({ skill }: { skill: Skill }) {
           >
             {meta.emoji} {meta.label}
           </span>
-          <span className="text-[11px] text-[#86868b]">v{skill.version}</span>
+          <span className="text-[11px] text-ink-500">v{skill.version}</span>
         </div>
 
         {/* Name */}
-        <h3 className="text-[17px] font-semibold leading-snug text-[#1d1d1f] group-hover:text-[#0071e3] transition-colors">
+        <h3 className="text-[17px] font-semibold leading-snug text-ink group-hover:text-coral transition-colors">
           {skill.name}
         </h3>
 
         {/* Description */}
-        <p className="mt-1.5 text-[13px] leading-relaxed text-[#6e6e73] line-clamp-3 flex-1">
+        <p className="mt-1.5 text-[13px] leading-relaxed text-ink-600 line-clamp-3 flex-1">
           {skill.description}
         </p>
 
         {/* Footer */}
-        <div className="mt-4 flex items-center justify-between border-t border-[#f0f0f2] pt-4">
-          <span className="text-[11px] text-[#86868b]">{timeAgo}</span>
-          <Link
-            href={`/skill/${skill.id}`}
-            className="btn-primary text-[13px] px-4 py-1.5"
-          >
-            Start →
+        <div className="mt-4 flex items-center justify-between border-t border-ink-100 pt-4">
+          <span className="text-[11px] text-ink-500">{timeAgo}</span>
+          <Link href={`/skill/${skill.id}`} className="btn-primary text-[13px] px-4 py-1.5">
+            Start
           </Link>
         </div>
       </div>

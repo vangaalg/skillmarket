@@ -18,17 +18,18 @@ export default async function ProfilePage({ params }: { params: { id: string } }
     /* no-op */
   }
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-white">Creator Profile</h1>
-      <p className="mt-1 text-white/70">
-        Profile page (Phase 3) — ratings, reviews, and an analytics dashboard
-        will live here.
+    <div className="mx-auto max-w-3xl px-6 py-16">
+      <h1 className="headline text-ink">Creator profile</h1>
+      <p className="mt-2 text-[15px] text-ink-600">
+        Profile page (Phase 3) — ratings, reviews, and an analytics dashboard will live here.
       </p>
-      <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+      <ul className="mt-8 grid gap-3 sm:grid-cols-2">
         {skills.map((s) => (
-          <li key={s.id} className="rounded-lg border border-white/10 bg-panel p-4">
-            <Link href={`/skill/${s.id}`} className="text-white">{s.name}</Link>
-            <p className="mt-1 text-sm text-white/60 line-clamp-2">{s.description}</p>
+          <li key={s.id} className="rounded-2xl border border-ink-200 bg-white p-4 hover:shadow-card transition-shadow">
+            <Link href={`/skill/${s.id}`} className="text-[15px] font-medium text-ink hover:text-coral transition-colors">
+              {s.name}
+            </Link>
+            <p className="mt-1 text-[13px] text-ink-600 line-clamp-2">{s.description}</p>
           </li>
         ))}
       </ul>

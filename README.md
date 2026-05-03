@@ -1,13 +1,14 @@
-# Skill Marketplace
+# Skillorbit.ai
 
-Open marketplace for AI Skills. Next.js 14 (App Router) + Supabase + Anthropic API, deployable to Vercel.
+The open platform for AI agents and skills. Next.js 14 (App Router) + Supabase + Anthropic API, deployable to Vercel.
 
 ## Phase 1 — what works today
 
-- `/` — lists every published Skill (name, description, **Start** button).
+- `/` — landing page with hero, features, categories, FAQ.
+- `/browse` — full skill grid, filterable by category.
 - `/skill/:id` — chat window backed by Claude.
-- `/upload` — creator form to publish a Skill (name, description, SKILL.md/JSON).
-- API: `/api/skills/upload`, `/api/skills/list`, `/api/skills/run`.
+- `/upload` — creator form to publish a skill (name, description, SKILL.md/JSON, drag-and-drop file).
+- API: `/api/skills/upload`, `/api/skills/list`, `/api/skills/run` — all rate-limited (Upstash).
 - Anthropic key stays server-side. The browser never sees it.
 
 ## Setup

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { IconChevronDown } from "@/components/icons";
 
 const FAQS = [
   {
@@ -35,31 +36,38 @@ const FAQS = [
 export default function FAQAccordion() {
   const [open, setOpen] = useState<number | null>(null);
   return (
-    <div className="divide-y divide-[#e8e8ed]" role="list">
-      {FAQS.map((item, i) => (
-        <div key={i} role="listitem">
-          <button
-            onClick={() => setOpen(open === i ? null : i)}
-            aria-expanded={open === i}
-            className="flex w-full items-center justify-between gap-4 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3] focus-visible:ring-offset-2 rounded-sm"
-          >
-            <span className="text-[15px] font-medium text-[#1d1d1f]">{item.q}</span>
-            <span
-              className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-full bg-[#f5f5f7] text-[#6e6e73] text-[14px] transition-transform duration-200"
-              style={{ transform: open === i ? "rotate(45deg)" : "rotate(0deg)" }}
-              aria-hidden
+    <div className="divide-y divide-ink-200" role="list">
+      {FAQS.map((item, i) => {
+        const isOpen = open === i;
+        return (
+          <div key={i} role="listitem">
+            <button
+              onClick={() => setOpen(isOpen ? null : i)}
+              aria-expanded={isOpen}
+              className="flex w-full items-center justify-between gap-4 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2 rounded-sm"
             >
-              +
-            </span>
-          </button>
-          <div
-            className="overflow-hidden transition-all duration-300"
-            style={{ maxHeight: open === i ? "400px" : "0px", opacity: open === i ? 1 : 0 }}
-          >
-            <p className="pb-5 text-[14px] leading-relaxed text-[#6e6e73]">{item.a}</p>
+              <span className="text-[15px] font-medium text-ink">{item.q}</span>
+              <span
+                className="flex-shrink-0 flex h-7 w-7 items-center justify-center rounded-full bg-cream-200 text-ink-600 transition-all duration-200"
+                style={{
+                  transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  background: isOpen ? "#FAE7DD" : "#F5F4ED",
+                  color: isOpen ? "#D97757" : "#7E7E7B",
+                }}
+                aria-hidden
+              >
+                <IconChevronDown size={15} strokeWidth={2} />
+              </span>
+            </button>
+            <div
+              className="overflow-hidden transition-all duration-300"
+              style={{ maxHeight: isOpen ? "400px" : "0px", opacity: isOpen ? 1 : 0 }}
+            >
+              <p className="pb-5 text-[14px] leading-relaxed text-ink-600">{item.a}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

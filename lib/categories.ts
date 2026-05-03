@@ -9,95 +9,99 @@ export type CategoryKey =
   | "education"
   | "other";
 
+// Category palette tuned for the Skillorbit / Claude warm theme.
+// `lightBg` is the soft tint behind icons + pills.
+// `hex` is the strong colour for accents and active states.
+
 export const CATEGORIES: {
   key: CategoryKey;
   label: string;
   emoji: string;
-  color: string;       // Tailwind bg class for icon circle
-  textColor: string;   // Tailwind text class
-  lightBg: string;     // Tailwind bg class for pill active state
-  hex: string;         // For inline CSS where needed
+  color: string;
+  textColor: string;
+  lightBg: string;
+  hex: string;
 }[] = [
   {
     key: "all",
     label: "All Skills",
     emoji: "✦",
-    color: "bg-[#1d1d1f]",
-    textColor: "text-[#1d1d1f]",
-    lightBg: "bg-[#1d1d1f]",
-    hex: "#1d1d1f",
+    color: "bg-ink",
+    textColor: "text-ink",
+    lightBg: "bg-ink",
+    hex: "#1F1E1D",
   },
   {
     key: "writing",
     label: "Writing",
     emoji: "✍️",
-    color: "bg-[#0071e3]",
-    textColor: "text-[#0071e3]",
-    lightBg: "bg-[#e8f1ff]",
-    hex: "#0071e3",
+    color: "bg-[#5B7FFF]",
+    textColor: "text-[#5B7FFF]",
+    lightBg: "bg-[#EEF1FF]",
+    hex: "#5B7FFF",
   },
   {
     key: "code",
     label: "Code & Dev",
     emoji: "💻",
-    color: "bg-[#6e40c9]",
-    textColor: "text-[#6e40c9]",
-    lightBg: "bg-[#f0ebff]",
-    hex: "#6e40c9",
+    color: "bg-[#8B5CF6]",
+    textColor: "text-[#8B5CF6]",
+    lightBg: "bg-[#F3EEFF]",
+    hex: "#8B5CF6",
   },
   {
     key: "data",
     label: "Data & Analysis",
     emoji: "📊",
-    color: "bg-[#00b4d8]",
-    textColor: "text-[#00b4d8]",
-    lightBg: "bg-[#e6f8fc]",
-    hex: "#00b4d8",
+    color: "bg-[#0EA5B7]",
+    textColor: "text-[#0EA5B7]",
+    lightBg: "bg-[#E5F7F9]",
+    hex: "#0EA5B7",
   },
   {
     key: "creative",
     label: "Creative",
     emoji: "🎨",
-    color: "bg-[#ff375f]",
-    textColor: "text-[#ff375f]",
-    lightBg: "bg-[#ffebef]",
-    hex: "#ff375f",
+    color: "bg-[#E94B6F]",
+    textColor: "text-[#E94B6F]",
+    lightBg: "bg-[#FCEAEF]",
+    hex: "#E94B6F",
   },
   {
     key: "research",
     label: "Research",
     emoji: "🔬",
-    color: "bg-[#ff9500]",
-    textColor: "text-[#ff9500]",
-    lightBg: "bg-[#fff5e6]",
-    hex: "#ff9500",
+    color: "bg-[#F59E0B]",
+    textColor: "text-[#A66A05]",
+    lightBg: "bg-[#FEF4E2]",
+    hex: "#F59E0B",
   },
   {
     key: "business",
     label: "Business",
     emoji: "💼",
-    color: "bg-[#34c759]",
-    textColor: "text-[#1a8c36]",
-    lightBg: "bg-[#e9f9ee]",
-    hex: "#34c759",
+    color: "bg-[#10B981]",
+    textColor: "text-[#0F8B61]",
+    lightBg: "bg-[#E5F8F1]",
+    hex: "#10B981",
   },
   {
     key: "education",
     label: "Education",
     emoji: "📚",
-    color: "bg-[#ffcc00]",
-    textColor: "text-[#8a6c00]",
-    lightBg: "bg-[#fffbe6]",
-    hex: "#ffcc00",
+    color: "bg-[#EAB308]",
+    textColor: "text-[#8C6800]",
+    lightBg: "bg-[#FBF6DA]",
+    hex: "#EAB308",
   },
   {
     key: "other",
     label: "Other",
     emoji: "⚡",
-    color: "bg-[#86868b]",
-    textColor: "text-[#86868b]",
-    lightBg: "bg-[#f0f0f2]",
-    hex: "#86868b",
+    color: "bg-[#7E7E7B]",
+    textColor: "text-[#7E7E7B]",
+    lightBg: "bg-[#F1EFE9]",
+    hex: "#7E7E7B",
   },
 ];
 
