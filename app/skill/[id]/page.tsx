@@ -1,31 +1,77 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getCategoryMeta } from "@/lib/categories";
 import type { Skill } from "@/lib/types";
 import ChatWindow from "@/components/ChatWindow";
-import { IconArrowRight, IconExternalLink } from "@/components/icons";
+import ShareButton from "@/components/ShareButton";
+import { IconArrowRight } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://skillorbit.ai";
 
 async function loadSkill(id: string): Promise<Skill | null> {
   try {
     const sb = supabaseAdmin();
-    const { data, error } = await sb.from("skills").select("*").eq("id", id).single();
-    if (error || !data) return null;
+    const { data, error } = await sb
+      .from("skills_with_usage")
+      .select("*")
+      .eq("id", id)
+      .single();
+    if (error || !data) {
+      // Fallback if the view hasn't been created yet.
+      const fb = await sb.from("skills").select("*").eq("id", id).single();
+      if (fb.error || !fb.data) return null;
+      return fb.data as Skill;
+    }
     return data as Skill;
   } catch {
     return null;
   }
 }
 
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const skill = await loadSkill(params.id);
+  if (!skill) {
+    return { title: "Skill not found" };
+  }
+  const url = `${APP_URL}/skill/${skill.id}`;
+  const title = `${skill.name} — Skillorbit.ai`;
+  const description = skill.description.slice(0, 200);
+  const ogImage = skill.thumbnail_url ?? undefined;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+      siteName: "Skillorbit.ai",
+      images: ogImage ? [{ url: ogImage, alt: skill.name }] : undefined,
+    },
+    twitter: {
+      card: ogImage ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  };
+}
+
 export default async function SkillPage({ params }: { params: { id: string } }) {
   const skill = await loadSkill(params.id);
   if (!skill) notFound();
   const meta = getCategoryMeta(skill.category);
+  const shareUrl = `${APP_URL}/skill/${skill.id}`;
 
   return (
     <div className="min-h-screen">
+      {/* ── Header ── */}
       <div className="bg-white border-b border-ink-200">
         <div className="mx-auto max-w-6xl px-6 py-6">
           <Link
@@ -34,14 +80,26 @@ export default async function SkillPage({ params }: { params: { id: string } }) 
           >
             <IconArrowRight size={14} className="rotate-180" /> Back to browse
           </Link>
+
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div
-                className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl flex-shrink-0"
-                style={{ background: meta.lightBg }}
-              >
-                {meta.emoji}
-              </div>
+              {/* Thumbnail or category icon */}
+              {skill.thumbnail_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={skill.thumbnail_url}
+                  alt=""
+                  className="h-16 w-16 rounded-2xl object-cover border border-ink-200 flex-shrink-0"
+                />
+              ) : (
+                <div
+                  className="flex h-16 w-16 items-center justify-center rounded-2xl text-3xl flex-shrink-0"
+                  style={{ background: meta.lightBg }}
+                >
+                  {meta.emoji}
+                </div>
+              )}
+
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span
@@ -51,18 +109,33 @@ export default async function SkillPage({ params }: { params: { id: string } }) 
                     {meta.label}
                   </span>
                   <span className="text-[11px] text-ink-500">v{skill.version}</span>
+                  {typeof skill.usage_count === "number" && skill.usage_count > 0 && (
+                    <span className="text-[11px] text-ink-500">
+                      · {skill.usage_count.toLocaleString()} runs
+                    </span>
+                  )}
                 </div>
                 <h1 className="text-[22px] font-semibold text-ink">{skill.name}</h1>
               </div>
             </div>
-            <Link href={`/skill/${skill.id}/share`} className="btn-ghost text-[13px]">
-              <IconExternalLink size={13} />
-              Share
-            </Link>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href={`/skill/${skill.id}/edit`} className="btn-ghost text-[13px]">
+                Edit
+              </Link>
+              <ShareButton
+                url={shareUrl}
+                title={`${skill.name} on Skillorbit.ai`}
+                text={skill.description}
+                className="btn-primary text-[13px] px-4 py-2"
+                label="Share skill"
+              />
+            </div>
           </div>
         </div>
       </div>
 
+      {/* ── Body ── */}
       <div className="mx-auto max-w-6xl px-6 py-8 grid gap-6 lg:grid-cols-[1fr_300px]">
         <div>
           <ChatWindow skillId={skill.id} />
@@ -83,6 +156,9 @@ export default async function SkillPage({ params }: { params: { id: string } }) 
             <Row label="Category" value={`${meta.emoji} ${meta.label}`} />
             <Row label="Version" value={`v${skill.version}`} />
             <Row label="Access" value="Free" />
+            {typeof skill.usage_count === "number" && (
+              <Row label="Runs" value={skill.usage_count.toLocaleString()} />
+            )}
             <Row
               label="Published"
               value={new Date(skill.created_at).toLocaleDateString("en-US", {
@@ -93,13 +169,21 @@ export default async function SkillPage({ params }: { params: { id: string } }) 
             />
           </div>
 
-          <div
-            className="rounded-2xl p-5 text-[13px] leading-relaxed border border-coral/15 bg-coral-50"
-          >
-            <div className="font-semibold mb-1 text-coral-700">Tip</div>
-            <div className="text-ink-700">
-              Press <kbd className="rounded bg-white border border-ink-200 px-1.5 py-0.5 font-mono text-[11px]">Enter</kbd> to send. Skills run on Claude — responses generate in real time.
-            </div>
+          {/* Share card — emphasises the platform's main motto */}
+          <div className="rounded-2xl border border-coral/15 bg-coral-50 p-5">
+            <h2 className="text-[12px] font-semibold uppercase tracking-widest text-coral-700 mb-2">
+              Share with friends
+            </h2>
+            <p className="text-[13px] leading-relaxed text-ink-700 mb-3">
+              Send this skill to peers — they can run it instantly without an account.
+            </p>
+            <ShareButton
+              url={shareUrl}
+              title={`${skill.name} on Skillorbit.ai`}
+              text={skill.description}
+              className="btn-primary text-[13px] w-full justify-center py-2"
+              label="Copy share link"
+            />
           </div>
         </aside>
       </div>

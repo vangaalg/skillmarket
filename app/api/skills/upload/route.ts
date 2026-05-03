@@ -26,6 +26,7 @@ const Body = z.object({
     ),
   ]),
   category: z.enum(VALID_CATEGORIES).default("other"),
+  thumbnail_url: z.string().url().max(500).optional().nullable(),
   owner_id: z.string().uuid().optional(),
   // PHASE 2: price_cents accepted but ignored on free tier today.
   price_cents: z.number().int().min(0).optional(),
@@ -59,6 +60,7 @@ export async function POST(req: Request) {
       description: body.description,
       definition,
       category: body.category,
+      thumbnail_url: body.thumbnail_url ?? null,
       price_cents: body.price_cents ?? 0,
       is_published: true,
     })

@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { CATEGORIES, getCategoryMeta } from "@/lib/categories";
 import type { Skill } from "@/lib/types";
 import FAQAccordion from "@/components/FAQAccordion";
+import SkillTile from "@/components/SkillTile";
 import {
   IconArrowRight,
   IconCheck,
@@ -33,11 +34,32 @@ async function loadPreviewSkills(): Promise<Skill[]> {
     const sb = supabaseAdmin();
     const { data } = await sb
       .from("skills")
-      .select("id,name,description,category,version,created_at")
+      .select("id,name,description,category,version,created_at,thumbnail_url")
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .limit(6);
     return (data ?? []) as Skill[];
+  } catch {
+    return [];
+  }
+}
+
+async function loadTrendingSkills(): Promise<Skill[]> {
+  try {
+    const sb = supabaseAdmin();
+    // Use the view if it exists; gracefully fall back to plain skills.
+    const { data, error } = await sb
+      .from("skills_with_usage")
+      .select(
+        "id,name,description,category,version,created_at,thumbnail_url,usage_count,last_used_at",
+      )
+      .order("usage_count", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(6);
+    if (error || !data) return [];
+    // Only show trending if at least one skill has actual runs.
+    const hasRuns = data.some((s) => (s.usage_count ?? 0) > 0);
+    return hasRuns ? (data as Skill[]) : [];
   } catch {
     return [];
   }
@@ -62,7 +84,11 @@ async function getStats() {
 }
 
 export default async function LandingPage() {
-  const [previewSkills, stats] = await Promise.all([loadPreviewSkills(), getStats()]);
+  const [previewSkills, trendingSkills, stats] = await Promise.all([
+    loadPreviewSkills(),
+    loadTrendingSkills(),
+    getStats(),
+  ]);
 
   return (
     <>
@@ -260,9 +286,39 @@ export default async function LandingPage() {
               </Link>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {previewSkills.map((skill) => (
-                <SkillPreviewCard key={skill.id} skill={skill} />
+                <SkillTile key={skill.id} skill={skill} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 6b. TRENDING ────────────────────────────────────────────── */}
+      {trendingSkills.length > 0 && (
+        <section aria-labelledby="trending-heading" className="py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
+              <div>
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-coral-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-coral-700 mb-3">
+                  🔥 Trending now
+                </div>
+                <h2 id="trending-heading" className="headline text-ink">
+                  Most-used skills.
+                </h2>
+                <p className="mt-2 text-[15px] text-ink-600">
+                  Ranked by community runs. Updated continuously.
+                </p>
+              </div>
+              <Link href="/browse" className="text-[14px] text-coral hover:underline font-medium inline-flex items-center gap-1">
+                View all <IconArrowRight size={14} />
+              </Link>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {trendingSkills.map((skill, i) => (
+                <SkillTile key={skill.id} skill={skill} rank={i + 1} />
               ))}
             </div>
           </div>
@@ -417,37 +473,6 @@ function ProductMockup({ skills }: { skills: Skill[] }) {
         Free · No signup
       </div>
     </div>
-  );
-}
-
-function SkillPreviewCard({ skill }: { skill: Skill }) {
-  const meta = getCategoryMeta(skill.category);
-  return (
-    <article className="skill-tile group flex flex-col">
-      <div className="h-[3px]" style={{ background: meta.hex }} />
-      <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-center justify-between mb-3">
-          <span
-            className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold"
-            style={{ background: meta.lightBg, color: meta.hex }}
-          >
-            {meta.emoji} {meta.label}
-          </span>
-          <span className="text-[11px] text-ink-500">v{skill.version}</span>
-        </div>
-        <h3 className="text-[16px] font-semibold text-ink group-hover:text-coral transition-colors">
-          {skill.name}
-        </h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-ink-600 line-clamp-2 flex-1">
-          {skill.description}
-        </p>
-        <div className="mt-4 pt-4 border-t border-ink-100 flex justify-end">
-          <Link href={`/skill/${skill.id}`} className="btn-primary text-[13px] px-4 py-1.5">
-            Start <IconArrowRight size={13} strokeWidth={2.25} />
-          </Link>
-        </div>
-      </div>
-    </article>
   );
 }
 

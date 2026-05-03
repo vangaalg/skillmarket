@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES } from "@/lib/categories";
 import { IconArrowRight, IconCheck, IconFolderUp } from "@/components/icons";
+import ThumbnailUpload from "@/components/ThumbnailUpload";
 
 const MAX_DEFINITION_CHARS = 50_000;
 
@@ -17,6 +18,7 @@ export default function UploadPage() {
   const [definition, setDefinition] = useState(
     "# SKILL.md\n\nDescribe how this Skill should behave...\n",
   );
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -74,7 +76,13 @@ export default function UploadPage() {
       const res = await fetch("/api/skills/upload", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name, description, category, definition }),
+        body: JSON.stringify({
+          name,
+          description,
+          category,
+          definition,
+          thumbnail_url: thumbnailUrl,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");
@@ -144,6 +152,8 @@ export default function UploadPage() {
         </div>
 
         <form onSubmit={submit} className="mt-6 rounded-2xl border border-ink-200 bg-white p-6 space-y-6">
+          <ThumbnailUpload value={thumbnailUrl} onChange={setThumbnailUrl} />
+
           <div>
             <label className="block text-[13px] font-medium text-ink mb-1.5">
               Skill name <span className="text-coral">*</span>

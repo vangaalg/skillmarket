@@ -95,5 +95,12 @@ export async function POST(req: Request) {
     // swallow — telemetry only.
   }
 
+  // Increment usage counter for trending/popular ranking. Best-effort.
+  try {
+    await sb.rpc("increment_skill_usage", { skill_id_param: body.skill_id });
+  } catch {
+    /* swallow — analytics only */
+  }
+
   return NextResponse.json({ reply, session_id: sessionId });
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CATEGORIES, getCategoryMeta } from "@/lib/categories";
 import type { Skill } from "@/lib/types";
+import SkillTile from "@/components/SkillTile";
 
 export default function CategoryFilter({ skills }: { skills: Skill[] }) {
   const [active, setActive] = useState<string>("all");
@@ -106,57 +107,3 @@ export default function CategoryFilter({ skills }: { skills: Skill[] }) {
   );
 }
 
-function SkillTile({ skill }: { skill: Skill }) {
-  const meta = getCategoryMeta(skill.category);
-  const timeAgo = getTimeAgo(skill.created_at);
-
-  return (
-    <article className="skill-tile group flex flex-col">
-      {/* Colored accent bar */}
-      <div className="h-1 w-full" style={{ background: meta.hex }} />
-
-      <div className="flex flex-col flex-1 p-5">
-        {/* Category badge + version */}
-        <div className="flex items-center justify-between mb-3">
-          <span
-            className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
-            style={{ background: meta.lightBg, color: meta.hex }}
-          >
-            {meta.emoji} {meta.label}
-          </span>
-          <span className="text-[11px] text-ink-500">v{skill.version}</span>
-        </div>
-
-        {/* Name */}
-        <h3 className="text-[17px] font-semibold leading-snug text-ink group-hover:text-coral transition-colors">
-          {skill.name}
-        </h3>
-
-        {/* Description */}
-        <p className="mt-1.5 text-[13px] leading-relaxed text-ink-600 line-clamp-3 flex-1">
-          {skill.description}
-        </p>
-
-        {/* Footer */}
-        <div className="mt-4 flex items-center justify-between border-t border-ink-100 pt-4">
-          <span className="text-[11px] text-ink-500">{timeAgo}</span>
-          <Link href={`/skill/${skill.id}`} className="btn-primary text-[13px] px-4 py-1.5">
-            Start
-          </Link>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function getTimeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return "Just now";
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  if (d < 30) return `${d}d ago`;
-  return new Date(dateStr).toLocaleDateString("en-US", { month: "short", year: "numeric" });
-}
